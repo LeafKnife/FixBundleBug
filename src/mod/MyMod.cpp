@@ -18,6 +18,7 @@ bool MyMod::load() {
 bool MyMod::enable() {
     getSelf().getLogger().debug("Enabling...");
     // Code for enabling the mod goes here.
+    hook::enable();
     return true;
 }
 

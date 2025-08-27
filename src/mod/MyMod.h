@@ -30,4 +30,8 @@ private:
     ll::mod::NativeMod& mSelf;
 };
 
+namespace hook {
+void enable();
+}
+
 } // namespace my_mod
