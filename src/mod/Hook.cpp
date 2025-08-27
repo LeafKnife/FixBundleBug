@@ -17,7 +17,6 @@ LL_TYPE_INSTANCE_HOOK(
     int            slot,
     int            face,
     int            itemCount
-
 ) {
     short id = item.getId();
     if (id <= 273 && id >= 257) {

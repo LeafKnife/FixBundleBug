@@ -4,7 +4,7 @@
     "tooth": "github.com/LeafKnife/FixBundleBug",
     "version": "0.1.0",
     "info": {
-        "name": "FixBundle",
+        "name": "FixBundleBug",
         "description": "修复利用漏斗和收纳袋刷物品",
         "tags": [
             "platform:levilamina",
@@ -28,8 +28,8 @@
                     "placements": [
                         {
                             "type": "dir",
-                            "src": "FixBundle/",
-                            "dest": "plugins/FixBundle/"
+                            "src": "FixBundleBug/",
+                            "dest": "plugins/FixBundleBug/"
                         }
                     ]
                 }
