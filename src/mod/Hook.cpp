@@ -21,7 +21,7 @@ LL_TYPE_INSTANCE_HOOK(
     int            itemCount
 ) {
     short id = item.getId();
-    if (id <= 273 && id >= 257) {
+    if (id <= 280 && id >= 264) {
         return false;
     }
     return origin(region, container, item, slot, face, itemCount);
@@ -40,14 +40,28 @@ LL_TYPE_STATIC_HOOK(
     int          face
 ) {
     short id = item.getId();
-    if (id <= 273 && id >= 257) {
+    if (id <= 280 && id >= 264) {
         return false;
     }
     return origin(container, item, stackSizeLimit, slot, face);
 }
 
+// LL_TYPE_INSTANCE_HOOK(
+//     addItemPacketHook,
+//     HookPriority::Normal,
+//     AddItemActorPacket,
+//     &AddItemActorPacket::$write,
+//     void,
+//     ::BinaryStream& stream
+// ) {
+//     origin(stream);
+//     auto& logger = my_mod::MyMod::getInstance().getSelf().getLogger();
+//     logger.info("owner {} buffer {} view {}", stream.mOwnedBuffer, stream.mBuffer, stream.mView);
+// }
+
 void enable() {
     HopperAddItemHook::hook();
     DropperTryMoveInItemsHook::hook();
+    // addItemPacketHook::hook();
 }
 } // namespace my_mod::hook
