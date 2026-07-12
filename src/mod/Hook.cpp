@@ -1,13 +1,21 @@
+#include "mc/world/level/ChunkPos.h"
 #include "mod/MyMod.h"
 
 #include <ll/api/memory/Hook.h>
 #include <mc/world/actor/Hopper.h>
+#include <mc/world/containers/models/LevelContainerModel.h>
 #include <mc/world/item/ItemStack.h>
+#include <mc/world/level/BlockSource.h>
+#include <mc/world/level/block/actor/ChestBlockActor.h>
 #include <mc/world/level/block/actor/DropperBlockActor.h>
+#include <mc/world/level/chunk/predicate.h>
+
 
 #include <regex>
 
 namespace my_mod::hook {
+
+auto& logger = MyMod::getInstance().getSelf().getLogger();
 
 LL_TYPE_INSTANCE_HOOK(
     HopperAddItemHook,
@@ -54,8 +62,48 @@ LL_TYPE_STATIC_HOOK(
     return origin(container, item, stackSizeLimit, slot, face);
 }
 
+LL_TYPE_INSTANCE_HOOK(
+    startOpenChestBlockActorHook,
+    ll::memory::HookPriority::Normal,
+    ChestBlockActor,
+    &ChestBlockActor::canOpen,
+    bool,
+    ::BlockSource& region
+) {
+    if (mLargeChestPaired) {
+        ChunkPos chunkPos1{mPosition};
+        ChunkPos chunkPos2{mLargeChestPairedPosition};
+        if (region.hasUntickedNeighborChunk(chunkPos1, 0) || region.hasUntickedNeighborChunk(chunkPos2, 0))
+            return false;
+    } else {
+        ChunkPos chunkPos{mPosition};
+        if (region.hasUntickedNeighborChunk(chunkPos, 0)) return false;
+    }
+    return origin(region);
+}
+
+
+LL_TYPE_INSTANCE_HOOK(
+    HopperTryPullInItemsFromAboveContainerHook,
+    ll::memory::HookPriority::Normal,
+    Hopper,
+    &Hopper::_tryPullInItemsFromAboveContainer,
+    bool,
+    ::BlockSource& region,
+    ::Container&   toContainer,
+    ::Vec3 const&  pos
+) {
+    ChunkPos chunkPos{pos};
+    if (region.hasUntickedNeighborChunk(chunkPos, 1)) return false;
+    auto r = origin(region, toContainer, pos);
+    return r;
+}
+
 void enable() {
     HopperAddItemHook::hook();
     DropperTryMoveInItemsHook::hook();
+    // HopperTryTakeInItemFromSlotHook::hook();
+    HopperTryPullInItemsFromAboveContainerHook::hook();
+    startOpenChestBlockActorHook::hook();
 }
 } // namespace my_mod::hook
